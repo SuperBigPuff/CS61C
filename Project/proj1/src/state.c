@@ -25,13 +25,55 @@ static void update_head(game_state_t *state, unsigned int snum);
 game_state_t *create_default_state() {
   // TODO: Implement this function.
   // My implementation as below
+  // malloc space first
   game_state_t* default_state = malloc(sizeof(game_state_t));
+  // rows def
   default_state -> num_rows =18;
-  // board?
+  // board, a double pointer, we should have 18 of it
+  default_state -> board = malloc(sizeof(char*) * default_state -> num_rows);
+  // malloc space for each row, and fill with spaces
+  for (int i = 0; i < default_state -> num_rows; i++) {
+    default_state -> board[i] = malloc(sizeof(char) * 21); // 20 chars + null terminator
+    default_state -> board[i][20] = '\0'; // null terminator
+  }
+  // hardcode the board， stored in static
+  const char *rows[18] = {
+    "####################",
+    "#                  #",
+    "# d>D    *         #",
+    "#                  #",
+    "#                  #",
+    "#                  #",
+    "#                  #",
+    "#                  #",
+    "#                  #",
+    "#                  #",
+    "#                  #",
+    "#                  #",
+    "#                  #",
+    "#                  #",
+    "#                  #",
+    "#                  #",
+    "#                  #",
+    "####################",
+  };
+  // pass this board to the default_state
+  for (int i = 0; i < default_state -> num_rows; i++) {
+    strcpy(default_state -> board[i], rows[i]);
+  }
+  // snakes def
+  // nums
   default_state-> num_snakes = 1;
-  
+  // pointer
+  default_state -> snakes = malloc(sizeof(snake_t) * 1); // only one snake
+  // items: finish snake and fruit position， fruit already in board
+  default_state->snakes[0].tail_row = 2;
+  default_state->snakes[0].tail_col = 2;
+  default_state->snakes[0].head_row = 2;
+  default_state->snakes[0].head_col = 4;
+  default_state->snakes[0].live = true;
 
-  return NULL;
+  return default_state;
 }
 
 /* Task 2 */
