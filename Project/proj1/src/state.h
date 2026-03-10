@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-typedef struct snake_t {
+typedef struct snake_t { // indexes
   unsigned int tail_row;
   unsigned int tail_col;
   unsigned int head_row;
@@ -15,10 +15,10 @@ typedef struct snake_t {
 
 typedef struct game_state_t {
   unsigned int num_rows;
-  char **board;
+  char **board; // point to a row(a character array), so we use char ** 
 
   unsigned int num_snakes;
-  snake_t *snakes;
+  snake_t *snakes; // point to many snakes
 } game_state_t;
 
 game_state_t *create_default_state();

@@ -24,6 +24,13 @@ static void update_head(game_state_t *state, unsigned int snum);
 /* Task 1 */
 game_state_t *create_default_state() {
   // TODO: Implement this function.
+  // My implementation as below
+  game_state_t* default_state = malloc(sizeof(game_state_t));
+  default_state -> num_rows =18;
+  // board?
+  default_state-> num_snakes = 1;
+  
+
   return NULL;
 }
 
