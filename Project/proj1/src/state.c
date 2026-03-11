@@ -79,12 +79,26 @@ game_state_t *create_default_state() {
 /* Task 2 */
 void free_state(game_state_t *state) {
   // TODO: Implement this function.
+  // items to free: default_state pointer, board, snakes
+  // free rows
+  for (int i = 0; i < state -> num_rows; i++) {
+    free(state -> board[i]);
+  }
+  // free board
+  free(state -> board);
+  // free snakes
+  free(state -> snakes);
+  // free state pointer
+  free(state);
   return;
 }
 
 /* Task 3 */
 void print_board(game_state_t *state, FILE *fp) {
   // TODO: Implement this function.
+  for (int i = 0; i < state -> num_rows; i++) {
+    fprintf(fp, "%s\n", state -> board[i]);
+  }
   return;
 }
 
@@ -121,7 +135,11 @@ static void set_board_at(game_state_t *state, unsigned int row, unsigned int col
 */
 static bool is_tail(char c) {
   // TODO: Implement this function.
-  return true;
+  // wasd are the tail characters
+  if (c == 'w' || c == 'a' || c == 's' || c == 'd') {
+    return true;
+  }
+  return false;
 }
 
 /*
@@ -131,7 +149,11 @@ static bool is_tail(char c) {
 */
 static bool is_head(char c) {
   // TODO: Implement this function.
-  return true;
+  // WASDx are the head characters
+  if (c == 'W' || c == 'A' || c == 'S' || c == 'D' || c == 'x') {
+    return true;
+  }
+  return false;
 }
 
 /*
@@ -140,7 +162,10 @@ static bool is_head(char c) {
 */
 static bool is_snake(char c) {
   // TODO: Implement this function.
-  return true;
+  if (is_tail(c) || is_head(c) || c == '^' || c == '<' || c == '>' || c == 'v') {
+    return true;
+  }
+  return false;
 }
 
 /*
@@ -150,7 +175,16 @@ static bool is_snake(char c) {
 */
 static char body_to_tail(char c) {
   // TODO: Implement this function.
-  return '?';
+    if (c == '^') {
+      return 'w';
+    } else if (c == '<') {
+      return 'a';
+    } else if (c == 'v') {
+      return 's';
+    } else if (c == '>') {
+      return 'd';
+    }
+    return '?'; 
 }
 
 /*
@@ -160,7 +194,16 @@ static char body_to_tail(char c) {
 */
 static char head_to_body(char c) {
   // TODO: Implement this function.
-  return '?';
+    if (c == 'W') {
+      return '^';
+    } else if (c == 'A') {
+      return '<';
+    } else if (c == 'S') {
+      return 'v';
+    } else if (c == 'D') {
+      return '>';
+    }
+    return '?';
 }
 
 /*
@@ -170,6 +213,11 @@ static char head_to_body(char c) {
 */
 static unsigned int get_next_row(unsigned int cur_row, char c) {
   // TODO: Implement this function.
+  if (c == 'v' || c == 's' || c == 'S') {
+    return cur_row + 1;
+  } else if (c == '^' || c == 'w' || c == 'W') {
+    return cur_row - 1;
+  }
   return cur_row;
 }
 
@@ -180,6 +228,11 @@ static unsigned int get_next_row(unsigned int cur_row, char c) {
 */
 static unsigned int get_next_col(unsigned int cur_col, char c) {
   // TODO: Implement this function.
+  if (c == '>' || c == 'd' || c == 'D') {
+    return cur_col + 1;
+  } else if (c == '<' || c == 'a' || c == 'A') {
+    return cur_col - 1;
+  }
   return cur_col;
 }
 
