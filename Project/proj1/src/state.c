@@ -245,7 +245,11 @@ static unsigned int get_next_col(unsigned int cur_col, char c) {
 */
 static char next_square(game_state_t *state, unsigned int snum) {
   // TODO: Implement this function.
-  return '?';
+  snake_t snake = state -> snakes[snum];
+  char head = get_board_at(state, snake.head_row, snake.head_col);
+  unsigned int next_row = get_next_row(snake.head_row, head);
+  unsigned int next_col = get_next_col(snake.head_col, head);
+  return get_board_at(state, next_row, next_col);
 }
 
 /*
@@ -261,6 +265,16 @@ static char next_square(game_state_t *state, unsigned int snum) {
 */
 static void update_head(game_state_t *state, unsigned int snum) {
   // TODO: Implement this function.
+  snake_t *snake = &state -> snakes[snum];
+  char head = get_board_at(state, snake -> head_row, snake -> head_col);
+  unsigned int next_row = get_next_row(snake -> head_row, head);
+  unsigned int next_col = get_next_col(snake -> head_col, head);
+  // update the head on the board
+  set_board_at(state, next_row, next_col, head); // head
+  set_board_at(state, snake -> head_row, snake -> head_col, head_to_body(head)); // body
+  // update the head in the snake struct
+  snake -> head_row = next_row;
+  snake -> head_col = next_col;
   return;
 }
 
@@ -276,6 +290,16 @@ static void update_head(game_state_t *state, unsigned int snum) {
 */
 static void update_tail(game_state_t *state, unsigned int snum) {
   // TODO: Implement this function.
+  snake_t *snake = &state -> snakes[snum];
+  char tail = get_board_at(state, snake -> tail_row, snake -> tail_col);
+  unsigned int next_row = get_next_row(snake -> tail_row, tail);
+  unsigned int next_col = get_next_col(snake -> tail_col, tail);
+  // update the tail on the board
+  set_board_at(state, snake -> tail_row, snake -> tail_col, ' '); // tail
+  set_board_at(state, next_row, next_col, body_to_tail(get_board_at(state, next_row, next_col))); // body
+  // update the tail in the snake struct
+  snake -> tail_row = next_row;
+  snake -> tail_col = next_col;
   return;
 }
 
