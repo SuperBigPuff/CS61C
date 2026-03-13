@@ -306,13 +306,51 @@ static void update_tail(game_state_t *state, unsigned int snum) {
 /* Task 4.5 */
 void update_state(game_state_t *state, int (*add_food)(game_state_t *state)) {
   // TODO: Implement this function.
+  for (unsigned int i = 0; i < state -> num_snakes; i++) {
+    char next = next_square(state, i);
+    // normal case
+    if (next == ' ') {
+      update_head(state, i);
+      update_tail(state, i);
+    }
+    else if (next == '*') {
+      update_head(state, i); // do not update tail
+      add_food(state); // add one more food
+    }
+    else if (next == '#' || is_snake(next)) {
+      // snake dies
+      state -> snakes[i].live = false;
+      // set head to 'x'
+      set_board_at(state, state -> snakes[i].head_row, state -> snakes[i].head_col, 'x');
+    }
+  }
   return;
 }
 
 /* Task 5.1 */
 char *read_line(FILE *fp) {
   // TODO: Implement this function.
-  return NULL;
+  // create a buffer to store the line
+  char buffer[128]; // enough space on stack
+  // heap space for the line to return
+  char *line = NULL;
+  char *new_line = NULL;
+  // length
+  int str_length = 0;
+  int block_length = 0;
+  // read a line from the file
+  while(1){
+    if (fgets(buffer, sizeof(buffer), fp) == NULL) {
+      return NULL; // read nothing
+    }
+    block_length = strlen(buffer);
+    // allocate new space for the block
+    new_line = realloc(line, str_length + block_length + 1); 
+    strcpy(new_line + str_length, buffer);
+    line = new_line; 
+    str_length = str_length + block_length; 
+  }
+  return line;
 }
 
 /* Task 5.2 */
