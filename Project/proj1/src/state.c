@@ -38,24 +38,24 @@ game_state_t *create_default_state() {
   }
   // hardcode the board， stored in static
   const char *rows[18] = {
-    "####################",
-    "#                  #",
-    "# d>D    *         #",
-    "#                  #",
-    "#                  #",
-    "#                  #",
-    "#                  #",
-    "#                  #",
-    "#                  #",
-    "#                  #",
-    "#                  #",
-    "#                  #",
-    "#                  #",
-    "#                  #",
-    "#                  #",
-    "#                  #",
-    "#                  #",
-    "####################",
+    "####################\n",
+    "#                  #\n",
+    "# d>D    *         #\n",
+    "#                  #\n",
+    "#                  #\n",
+    "#                  #\n",
+    "#                  #\n",
+    "#                  #\n",
+    "#                  #\n",
+    "#                  #\n",
+    "#                  #\n",
+    "#                  #\n",
+    "#                  #\n",
+    "#                  #\n",
+    "#                  #\n",
+    "#                  #\n",
+    "#                  #\n",
+    "####################\n",
   };
   // pass this board to the default_state
   for (int i = 0; i < default_state -> num_rows; i++) {
@@ -97,7 +97,7 @@ void free_state(game_state_t *state) {
 void print_board(game_state_t *state, FILE *fp) {
   // TODO: Implement this function.
   for (int i = 0; i < state -> num_rows; i++) {
-    fprintf(fp, "%s\n", state -> board[i]);
+    fprintf(fp, "%s", state -> board[i]);
   }
   return;
 }
@@ -336,12 +336,15 @@ char *read_line(FILE *fp) {
   char *line = NULL;
   char *new_line = NULL;
   // length
-  int str_length = 0;
-  int block_length = 0;
+  size_t str_length = 0;
+  size_t block_length = 0;
   // read a line from the file
   while(1){
     if (fgets(buffer, sizeof(buffer), fp) == NULL) {
-      return NULL; // read nothing
+      if (line == NULL){
+        return NULL; // read nothing
+      }
+      break; // EOF
     }
     block_length = strlen(buffer);
     // allocate new space for the block
@@ -349,6 +352,10 @@ char *read_line(FILE *fp) {
     strcpy(new_line + str_length, buffer);
     line = new_line; 
     str_length = str_length + block_length; 
+    // check if line finished
+    if (strchr(buffer, '\n') != NULL){
+      break;
+    }
   }
   return line;
 }
@@ -356,7 +363,21 @@ char *read_line(FILE *fp) {
 /* Task 5.2 */
 game_state_t *load_board(FILE *fp) {
   // TODO: Implement this function.
-  return NULL;
+  game_state_t *state = malloc(sizeof(game_state_t));
+  // init some args
+  state -> num_rows = 0;
+  state -> num_snakes = 0;
+  state -> board = NULL;
+  state -> snakes = NULL;
+  // read the file line by line
+  char *line = NULL;
+  while ((line = read_line(fp)) != NULL) {
+    char **new_board = realloc(state -> board, sizeof(char*) * (state -> num_rows + 1));
+    state -> board = new_board;
+    state -> board[state -> num_rows] = line; // store the new line
+    state -> num_rows++;
+  }
+  return state;
 }
 
 /*
